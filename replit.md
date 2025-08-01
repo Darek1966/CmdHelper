@@ -1,6 +1,6 @@
 # Overview
 
-This is a full-stack web application built as a command search tool that allows users to search and browse technical commands. The application features a React frontend with a modern UI built using shadcn/ui components, and an Express.js backend with PostgreSQL database integration using Drizzle ORM. The system is designed to help users quickly find and reference various technical commands with detailed information including syntax, descriptions, categories, and examples.
+This is a professional full-stack web application designed for searching and exploring Windows CMD commands in Polish. The application connects to a user's Neon PostgreSQL database containing a comprehensive collection of 50 CMD commands. It features a modern React frontend with shadcn/ui components, professional styling with light/dark themes, and full functionality including command copying. The system displays commands from the `polecenia_cmd` table with fields: polecenie (command), opis_krotki (short description), opis_szczegolowy (detailed description), and slowa_kluczowe (keywords array).
 
 # User Preferences
 
@@ -24,10 +24,11 @@ Preferred communication style: Simple, everyday language.
 - **Development Tools**: TSX for development server with hot reload
 
 ## Data Storage
-- **Database**: PostgreSQL with Neon serverless connection
-- **ORM**: Drizzle ORM for type-safe database operations
-- **Schema Management**: Drizzle Kit for migrations and schema generation
-- **Connection**: Connection pooling with WebSocket support for serverless environments
+- **Database**: User's Neon PostgreSQL database (postgresql://neondb_owner:npg_LZhn7Kl8ASPF@ep-weathered-recipe-a28prumt-pooler.eu-central-1.aws.neon.tech/neondb)
+- **Primary Table**: `polecenia_cmd` with 50 Windows CMD commands
+- **Schema**: id (integer), opis_krotki (text), polecenie (text), opis_szczegolowy (text), slowa_kluczowe (text array)
+- **ORM**: Drizzle ORM adapted to match existing database structure
+- **Connection**: Direct connection to user's Neon database with WebSocket support
 
 ## Authentication & Authorization
 - **Current State**: Basic user schema exists but authentication is not implemented

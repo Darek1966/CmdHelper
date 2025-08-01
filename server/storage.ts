@@ -49,7 +49,8 @@ export class DatabaseStorage implements IStorage {
           sql`exists (select 1 from unnest(polecenia_cmd.slowa_kluczowe) as keyword where keyword ilike ${searchTerm})`
         )
       )
-      .limit(20);
+      .orderBy(polecenia_cmd.id)
+      .limit(50);
 
     return results;
   }
@@ -66,7 +67,8 @@ export class DatabaseStorage implements IStorage {
         examples: sql<string[]>`array[polecenia_cmd.opis_szczegolowy]`.as('examples')
       })
       .from(polecenia_cmd)
-      .limit(20);
+      .orderBy(polecenia_cmd.id)
+      .limit(50);
     return results;
   }
 

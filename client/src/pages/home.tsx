@@ -13,7 +13,15 @@ import { Terminal, Search, Copy, Clock, Tag, Star, ArrowRight, X, Folder, Networ
 import type { Command } from "@shared/schema";
 
 interface SearchResponse {
-  commands: Command[];
+  commands: {
+    id: number;
+    command: string;
+    description: string;
+    syntax: string;
+    category: string;
+    difficulty: string;
+    examples: string[];
+  }[];
   count: number;
   searchTime: number;
 }
@@ -244,63 +252,83 @@ export default function Home() {
                   <CardContent className="p-6">
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex-1">
-                        <h4 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-2">{command.command}</h4>
-                        <p className="text-slate-600 dark:text-slate-400 mb-3">{command.description}</p>
+                        <div className="flex items-center gap-3 mb-2">
+                          <h4 className="text-xl font-bold text-blue-600 dark:text-blue-400 font-mono bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-md">
+                            {command.command}
+                          </h4>
+                          <Badge variant="secondary" className="text-xs">
+                            {command.category}
+                          </Badge>
+                        </div>
+                        <p className="text-slate-700 dark:text-slate-300 mb-3 text-base leading-relaxed">
+                          {command.description}
+                        </p>
                       </div>
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        onClick={() => copyToClipboard(command.command)}
-                        className="border-slate-200 dark:border-slate-700"
-                      >
-                        <Copy className="w-4 h-4 mr-1" />
-                        Kopiuj
-                      </Button>
-                    </div>
-                    
-                    <div className="bg-slate-900 dark:bg-slate-950 rounded-lg p-4 mb-4">
-                      <code className="text-green-400 font-mono text-sm break-all">
-                        {command.syntax}
-                      </code>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => copyToClipboard(command.command)}
+                          className="border-blue-200 dark:border-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                        >
+                          <Copy className="w-4 h-4 mr-1" />
+                          Kopiuj
+                        </Button>
+                      </div>
                     </div>
 
-                    {command.examples && command.examples.length > 0 && (
-                      <div className="space-y-3">
+                    {command.examples && command.examples.length > 0 && command.examples[0] && (
+                      <div className="space-y-4">
                         <div>
-                          <h5 className="font-medium text-slate-800 dark:text-slate-100 mb-2">Przykłady użycia:</h5>
-                          <div className="space-y-2">
-                            {command.examples.slice(0, 2).map((example, index) => (
-                              <div key={index} className="bg-slate-50 dark:bg-slate-800 rounded-lg p-3">
-                                <code className="text-slate-800 dark:text-slate-100 font-mono text-sm block mb-1">
-                                  {example.split('|')[0]?.trim()}
-                                </code>
-                                {example.split('|')[1] && (
-                                  <p className="text-slate-600 dark:text-slate-400 text-sm">
-                                    {example.split('|')[1]?.trim()}
-                                  </p>
-                                )}
-                              </div>
-                            ))}
+                          <h5 className="font-semibold text-slate-800 dark:text-slate-100 mb-3 flex items-center gap-2">
+                            <Terminal className="w-4 h-4 text-blue-600" />
+                            Szczegółowy opis:
+                          </h5>
+                          <div className="bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 rounded-lg p-4 border-l-4 border-blue-500">
+                            <p className="text-slate-700 dark:text-slate-300 leading-relaxed">
+                              {command.examples[0]}
+                            </p>
                           </div>
+                        </div>
+                        
+                        <div className="bg-slate-900 dark:bg-slate-950 rounded-lg p-4 border">
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="flex gap-1">
+                              <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                              <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                              <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                            </div>
+                            <span className="text-slate-400 text-sm font-mono">Command Prompt</span>
+                          </div>
+                          <code className="text-green-400 font-mono text-sm block">
+                            C:\&gt; {command.command}
+                          </code>
                         </div>
                       </div>
                     )}
 
-                    <div className="flex items-center justify-between mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
+                    <div className="flex items-center justify-between mt-6 pt-4 border-t border-slate-200 dark:border-slate-700">
                       <div className="flex items-center space-x-4 text-sm text-slate-500 dark:text-slate-400">
                         <span className="flex items-center space-x-1">
                           <Tag className="w-4 h-4" />
-                          <span>{command.category}</span>
+                          <span>ID: {command.id}</span>
                         </span>
                         <span className="flex items-center space-x-1">
                           <Star className="w-4 h-4" />
                           <span>{command.difficulty}</span>
                         </span>
                       </div>
-                      <Button variant="link" size="sm" className="text-primary">
-                        <span>Zobacz szczegóły</span>
-                        <ArrowRight className="w-4 h-4 ml-1" />
-                      </Button>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => copyToClipboard(command.examples?.[0] || command.description)}
+                          className="text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400"
+                        >
+                          <Copy className="w-4 h-4 mr-1" />
+                          Kopiuj opis
+                        </Button>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -313,44 +341,44 @@ export default function Home() {
         <Card className="mt-8 border-slate-200 dark:border-slate-700">
           <CardContent className="p-6">
             <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-4">Szybkie akcje</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <Button
                 variant="outline"
-                className="h-auto p-3 justify-start hover:border-primary hover:bg-primary/5 border-slate-200 dark:border-slate-700"
+                className="h-auto p-3 justify-start hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 border-slate-200 dark:border-slate-700"
                 onClick={() => {
-                  setSearchQuery("operacje na plikach");
-                  searchMutation.mutate("operacje na plikach");
+                  setSearchQuery("katalog");
+                  searchMutation.mutate("katalog");
                 }}
               >
                 <div className="bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 p-2 rounded-lg mr-3">
                   <Folder className="w-4 h-4" />
                 </div>
                 <div className="text-left">
-                  <p className="font-medium text-slate-800 dark:text-slate-100">Operacje na plikach</p>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Przeglądaj polecenia plików</p>
+                  <p className="font-medium text-slate-800 dark:text-slate-100">Katalogi</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Operacje na katalogach</p>
                 </div>
               </Button>
               
               <Button
                 variant="outline"
-                className="h-auto p-3 justify-start hover:border-primary hover:bg-primary/5 border-slate-200 dark:border-slate-700"
+                className="h-auto p-3 justify-start hover:border-green-500 hover:bg-green-50 dark:hover:bg-green-900/20 border-slate-200 dark:border-slate-700"
                 onClick={() => {
-                  setSearchQuery("sieć");
-                  searchMutation.mutate("sieć");
+                  setSearchQuery("plik");
+                  searchMutation.mutate("plik");
                 }}
               >
                 <div className="bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 p-2 rounded-lg mr-3">
-                  <Network className="w-4 h-4" />
+                  <Copy className="w-4 h-4" />
                 </div>
                 <div className="text-left">
-                  <p className="font-medium text-slate-800 dark:text-slate-100">Polecenia sieciowe</p>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Rozwiązywanie problemów sieciowych</p>
+                  <p className="font-medium text-slate-800 dark:text-slate-100">Pliki</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Operacje na plikach</p>
                 </div>
               </Button>
               
               <Button
                 variant="outline"
-                className="h-auto p-3 justify-start hover:border-primary hover:bg-primary/5 border-slate-200 dark:border-slate-700"
+                className="h-auto p-3 justify-start hover:border-purple-500 hover:bg-purple-50 dark:hover:bg-purple-900/20 border-slate-200 dark:border-slate-700"
                 onClick={() => {
                   setSearchQuery("system");
                   searchMutation.mutate("system");
@@ -360,8 +388,25 @@ export default function Home() {
                   <Settings className="w-4 h-4" />
                 </div>
                 <div className="text-left">
-                  <p className="font-medium text-slate-800 dark:text-slate-100">Narzędzia systemowe</p>
+                  <p className="font-medium text-slate-800 dark:text-slate-100">System</p>
                   <p className="text-sm text-slate-500 dark:text-slate-400">Zarządzanie systemem</p>
+                </div>
+              </Button>
+
+              <Button
+                variant="outline"
+                className="h-auto p-3 justify-start hover:border-orange-500 hover:bg-orange-50 dark:hover:bg-orange-900/20 border-slate-200 dark:border-slate-700"
+                onClick={() => {
+                  setSearchQuery("wyświetl");
+                  searchMutation.mutate("wyświetl");
+                }}
+              >
+                <div className="bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300 p-2 rounded-lg mr-3">
+                  <Terminal className="w-4 h-4" />
+                </div>
+                <div className="text-left">
+                  <p className="font-medium text-slate-800 dark:text-slate-100">Wyświetlanie</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Polecenia wyświetlające</p>
                 </div>
               </Button>
             </div>
@@ -384,11 +429,11 @@ export default function Home() {
             </div>
             
             <div className="flex items-center space-x-6 text-sm text-slate-500 dark:text-slate-400">
-              <span>Status bazy: {healthData?.status === "connected" ? "Połączona" : "Rozłączona"}</span>
+              <span>Status bazy: {healthData?.status === "connected" ? "Neon Database ✓" : "Rozłączona"}</span>
               <span>•</span>
-              <span>Zindeksowanych poleceń: {data?.count || 0}</span>
+              <span>Dostępnych poleceń: {data?.count || 0}</span>
               <span>•</span>
-              <span>Ostatnia aktualizacja: Dzisiaj</span>
+              <span>Tabela: polecenia_cmd</span>
             </div>
           </div>
         </div>
