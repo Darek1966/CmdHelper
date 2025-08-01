@@ -1,8 +1,10 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { searchCommandSchema } from "@shared/schema";
+import { searchCommandSchema, polecenia_cmd } from "@shared/schema";
 import { z } from "zod";
+import { db } from "./db";
+import { sql } from "drizzle-orm";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Search commands endpoint
@@ -35,7 +37,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/commands", async (req, res) => {
     try {
       const commands = await storage.getAllCommands();
-      res.json({ commands, count: commands.length });
+      
+      // Get total count from database
+      const totalCountResult = await db.select({ count: sql<number>`count(*)` }).from(polecenia_cmd);
+      const totalCount = totalCountResult[0]?.count || 0;
+      
+      res.json({ 
+        commands, 
+        count: totalCount,
+        total: totalCount 
+      });
     } catch (error) {
       console.error("Get commands error:", error);
       res.status(500).json({ 

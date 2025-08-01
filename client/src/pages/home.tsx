@@ -119,7 +119,9 @@ export default function Home() {
                 {healthData?.status === "connected" ? (
                   <>
                     <CheckCircle className="w-4 h-4 text-green-500" />
-                    <span className="text-sm text-slate-600 dark:text-slate-300">Baza połączona</span>
+                    <span className="text-sm text-slate-600 dark:text-slate-300">
+                      Baza połączona ({data?.count || 0} rekordów)
+                    </span>
                   </>
                 ) : (
                   <>

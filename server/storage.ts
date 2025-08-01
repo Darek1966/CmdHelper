@@ -50,7 +50,7 @@ export class DatabaseStorage implements IStorage {
         )
       )
       .orderBy(polecenia_cmd.id)
-      .limit(50);
+      .limit(100);
 
     return results;
   }
@@ -68,7 +68,7 @@ export class DatabaseStorage implements IStorage {
       })
       .from(polecenia_cmd)
       .orderBy(polecenia_cmd.id)
-      .limit(50);
+      .limit(100);
     return results;
   }
 
