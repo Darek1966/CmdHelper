@@ -184,6 +184,82 @@ export default function Home() {
           </CardContent>
         </Card>
 
+        {/* Quick Actions */}
+        <Card className="mb-8 border-slate-200 dark:border-slate-700">
+          <CardContent className="p-6">
+            <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-4">Szybkie akcje</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <Button
+                variant="outline"
+                className="h-auto p-3 justify-start hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 border-slate-200 dark:border-slate-700"
+                onClick={() => {
+                  setSearchQuery("katalog");
+                  searchMutation.mutate("katalog");
+                }}
+              >
+                <div className="bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 p-2 rounded-lg mr-3">
+                  <Folder className="w-4 h-4" />
+                </div>
+                <div className="text-left">
+                  <p className="font-medium text-slate-800 dark:text-slate-100">Katalogi</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Operacje na katalogach</p>
+                </div>
+              </Button>
+              
+              <Button
+                variant="outline"
+                className="h-auto p-3 justify-start hover:border-green-500 hover:bg-green-50 dark:hover:bg-green-900/20 border-slate-200 dark:border-slate-700"
+                onClick={() => {
+                  setSearchQuery("plik");
+                  searchMutation.mutate("plik");
+                }}
+              >
+                <div className="bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 p-2 rounded-lg mr-3">
+                  <Copy className="w-4 h-4" />
+                </div>
+                <div className="text-left">
+                  <p className="font-medium text-slate-800 dark:text-slate-100">Pliki</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Operacje na plikach</p>
+                </div>
+              </Button>
+              
+              <Button
+                variant="outline"
+                className="h-auto p-3 justify-start hover:border-purple-500 hover:bg-purple-50 dark:hover:bg-purple-900/20 border-slate-200 dark:border-slate-700"
+                onClick={() => {
+                  setSearchQuery("system");
+                  searchMutation.mutate("system");
+                }}
+              >
+                <div className="bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 p-2 rounded-lg mr-3">
+                  <Settings className="w-4 h-4" />
+                </div>
+                <div className="text-left">
+                  <p className="font-medium text-slate-800 dark:text-slate-100">System</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Zarządzanie systemem</p>
+                </div>
+              </Button>
+
+              <Button
+                variant="outline"
+                className="h-auto p-3 justify-start hover:border-orange-500 hover:bg-orange-50 dark:hover:bg-orange-900/20 border-slate-200 dark:border-slate-700"
+                onClick={() => {
+                  setSearchQuery("wyświetl");
+                  searchMutation.mutate("wyświetl");
+                }}
+              >
+                <div className="bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300 p-2 rounded-lg mr-3">
+                  <Terminal className="w-4 h-4" />
+                </div>
+                <div className="text-left">
+                  <p className="font-medium text-slate-800 dark:text-slate-100">Wyświetlanie</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Polecenia wyświetlające</p>
+                </div>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Search Results */}
         {(data || isLoading) && (
           <div className="space-y-6">
@@ -336,82 +412,6 @@ export default function Home() {
             )}
           </div>
         )}
-
-        {/* Quick Actions */}
-        <Card className="mt-8 border-slate-200 dark:border-slate-700">
-          <CardContent className="p-6">
-            <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-4">Szybkie akcje</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <Button
-                variant="outline"
-                className="h-auto p-3 justify-start hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 border-slate-200 dark:border-slate-700"
-                onClick={() => {
-                  setSearchQuery("katalog");
-                  searchMutation.mutate("katalog");
-                }}
-              >
-                <div className="bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 p-2 rounded-lg mr-3">
-                  <Folder className="w-4 h-4" />
-                </div>
-                <div className="text-left">
-                  <p className="font-medium text-slate-800 dark:text-slate-100">Katalogi</p>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Operacje na katalogach</p>
-                </div>
-              </Button>
-              
-              <Button
-                variant="outline"
-                className="h-auto p-3 justify-start hover:border-green-500 hover:bg-green-50 dark:hover:bg-green-900/20 border-slate-200 dark:border-slate-700"
-                onClick={() => {
-                  setSearchQuery("plik");
-                  searchMutation.mutate("plik");
-                }}
-              >
-                <div className="bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 p-2 rounded-lg mr-3">
-                  <Copy className="w-4 h-4" />
-                </div>
-                <div className="text-left">
-                  <p className="font-medium text-slate-800 dark:text-slate-100">Pliki</p>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Operacje na plikach</p>
-                </div>
-              </Button>
-              
-              <Button
-                variant="outline"
-                className="h-auto p-3 justify-start hover:border-purple-500 hover:bg-purple-50 dark:hover:bg-purple-900/20 border-slate-200 dark:border-slate-700"
-                onClick={() => {
-                  setSearchQuery("system");
-                  searchMutation.mutate("system");
-                }}
-              >
-                <div className="bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 p-2 rounded-lg mr-3">
-                  <Settings className="w-4 h-4" />
-                </div>
-                <div className="text-left">
-                  <p className="font-medium text-slate-800 dark:text-slate-100">System</p>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Zarządzanie systemem</p>
-                </div>
-              </Button>
-
-              <Button
-                variant="outline"
-                className="h-auto p-3 justify-start hover:border-orange-500 hover:bg-orange-50 dark:hover:bg-orange-900/20 border-slate-200 dark:border-slate-700"
-                onClick={() => {
-                  setSearchQuery("wyświetl");
-                  searchMutation.mutate("wyświetl");
-                }}
-              >
-                <div className="bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300 p-2 rounded-lg mr-3">
-                  <Terminal className="w-4 h-4" />
-                </div>
-                <div className="text-left">
-                  <p className="font-medium text-slate-800 dark:text-slate-100">Wyświetlanie</p>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Polecenia wyświetlające</p>
-                </div>
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
       </main>
 
       {/* Footer */}
