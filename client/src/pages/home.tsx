@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -35,6 +35,9 @@ interface HealthResponse {
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [hasSearched, setHasSearched] = useState(false);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(-1);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -68,11 +71,86 @@ export default function Home() {
     enabled: !hasSearched && !searchMutation.data,
   });
 
+  // Get suggestions for autocomplete
+  const getSuggestions = useCallback(async (query: string) => {
+    if (query.length < 1) {
+      setSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
+    
+    try {
+      const response = await apiRequest("POST", "/api/commands/search", { query });
+      const data = await response.json() as SearchResponse;
+      const commandSuggestions = data.commands.slice(0, 8).map(cmd => cmd.command);
+      setSuggestions(commandSuggestions);
+      setShowSuggestions(commandSuggestions.length > 0);
+    } catch (error) {
+      setSuggestions([]);
+      setShowSuggestions(false);
+    }
+  }, []);
+
+  // Debounce suggestions
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchQuery.trim()) {
+        getSuggestions(searchQuery.trim());
+      } else {
+        setShowSuggestions(false);
+        setSuggestions([]);
+      }
+    }, 300);
+    
+    return () => clearTimeout(timer);
+  }, [searchQuery, getSuggestions]);
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       searchMutation.mutate(searchQuery.trim());
+      setShowSuggestions(false);
     }
+  };
+
+  const handleSuggestionClick = (suggestion: string) => {
+    setSearchQuery(suggestion);
+    setShowSuggestions(false);
+    searchMutation.mutate(suggestion);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (!showSuggestions || suggestions.length === 0) return;
+
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        setActiveSuggestionIndex(prev => 
+          prev < suggestions.length - 1 ? prev + 1 : 0
+        );
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        setActiveSuggestionIndex(prev => 
+          prev > 0 ? prev - 1 : suggestions.length - 1
+        );
+        break;
+      case 'Enter':
+        if (activeSuggestionIndex >= 0) {
+          e.preventDefault();
+          handleSuggestionClick(suggestions[activeSuggestionIndex]);
+        }
+        break;
+      case 'Escape':
+        setShowSuggestions(false);
+        setActiveSuggestionIndex(-1);
+        break;
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+    setActiveSuggestionIndex(-1);
   };
 
   const handleClear = () => {
@@ -157,8 +235,12 @@ export default function Home() {
                     type="text"
                     placeholder="np. wylistuj wszystkie pliki w katalogu, kopiuj pliki, konfiguracja sieci..."
                     value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onChange={handleInputChange}
+                    onKeyDown={handleKeyDown}
+                    onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
+                    onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
                     className="pl-11 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
+                    autoComplete="off"
                   />
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 dark:text-slate-500 w-4 h-4" />
                 </div>
@@ -184,6 +266,37 @@ export default function Home() {
                 </Button>
               </div>
             </form>
+            
+            {/* Suggestions dropdown */}
+            {showSuggestions && suggestions.length > 0 && (
+              <div className="relative mt-2">
+                <div className="absolute z-50 w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                  <div className="px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-600">
+                    Podpowiedzi poleceń:
+                  </div>
+                  {suggestions.map((suggestion, index) => (
+                    <div
+                      key={suggestion}
+                      onClick={() => handleSuggestionClick(suggestion)}
+                      className={`px-4 py-3 cursor-pointer flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-700 border-b border-slate-100 dark:border-slate-600 last:border-b-0 ${
+                        index === activeSuggestionIndex 
+                          ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800' 
+                          : ''
+                      }`}
+                    >
+                      <Terminal className="w-4 h-4 text-blue-600 dark:text-blue-400 flex-shrink-0" />
+                      <span className="font-mono text-sm text-slate-900 dark:text-slate-100 flex-grow">
+                        {suggestion}
+                      </span>
+                      <ArrowRight className="w-3 h-3 text-slate-400 flex-shrink-0" />
+                    </div>
+                  ))}
+                  <div className="px-3 py-2 text-xs text-slate-400 dark:text-slate-500 border-t bg-slate-50 dark:bg-slate-700">
+                    Użyj strzałek ↑↓ do nawigacji, Enter do wyboru
+                  </div>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
 
