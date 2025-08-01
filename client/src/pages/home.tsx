@@ -68,11 +68,7 @@ export default function Home() {
     },
   });
 
-  // Initial commands query (for when no search is performed)
-  const { data: initialData, isLoading: initialLoading } = useQuery<SearchResponse>({
-    queryKey: ["/api/commands"],
-    enabled: !hasSearched && !searchMutation.data,
-  });
+  // Remove initial commands query - only show results after search
 
   // Get suggestions for autocomplete
   const getSuggestions = useCallback(async (query: string) => {
@@ -266,8 +262,8 @@ pause
     copyToClipboard(scriptContent);
   };
 
-  const data = searchMutation.data || initialData;
-  const isLoading = searchMutation.isPending || initialLoading;
+  const data = searchMutation.data;
+  const isLoading = searchMutation.isPending;
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
@@ -484,6 +480,43 @@ pause
           </CardContent>
         </Card>
 
+        {/* Welcome Message */}
+        {!hasSearched && !showGenerator && (
+          <Card className="border-slate-200 dark:border-slate-700">
+            <CardContent className="p-12 text-center">
+              <div className="max-w-2xl mx-auto">
+                <Terminal className="w-16 h-16 text-slate-300 dark:text-slate-600 mx-auto mb-6" />
+                <h3 className="text-2xl font-semibold text-slate-800 dark:text-slate-100 mb-4">
+                  Witaj w Wyszukiwarce poleceń CMD
+                </h3>
+                <p className="text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">
+                  Wprowadź opis lub słowo kluczowe w polu wyszukiwania powyżej, aby znaleźć odpowiednie polecenia 
+                  wiersza poleceń Windows. Możesz również skorzystać z szybkich akcji lub generatora skryptów .bat.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                  <Button
+                    onClick={() => {
+                      setSearchQuery("wylistuj pliki");
+                      searchMutation.mutate("wylistuj pliki");
+                    }}
+                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                  >
+                    <Search className="w-4 h-4 mr-2" />
+                    Przykładowe wyszukiwanie
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowGenerator(true)}
+                  >
+                    <FileText className="w-4 h-4 mr-2" />
+                    Otwórz generator skryptów
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Batch Script Generator */}
         {showGenerator && (
           <Card className="mb-8 border-slate-200 dark:border-slate-700">
@@ -579,7 +612,7 @@ pause
         )}
 
         {/* Search Results */}
-            {(data || isLoading) && (
+            {(hasSearched && (data || isLoading)) && (
               <div className="space-y-6">
                 {/* Search Statistics */}
                 <Card className="border-slate-200 dark:border-slate-700 animate-fade-in-up">
