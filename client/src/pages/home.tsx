@@ -317,7 +317,7 @@ pause
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
         {/* Search Interface */}
         <Card className="mb-8 border-slate-200 dark:border-slate-700">
           <CardContent className="p-6">
@@ -498,32 +498,34 @@ pause
         {/* Welcome Message */}
         {!hasSearched && !showGenerator && (
           <Card className="border-slate-200 dark:border-slate-700">
-            <CardContent className="p-4 sm:p-6 text-center">
-              <div className="max-w-xl mx-auto">
-                <Terminal className="w-10 h-10 sm:w-12 sm:h-12 text-slate-300 dark:text-slate-600 mx-auto mb-3 sm:mb-4" />
-                <h3 className="text-lg sm:text-xl lg:text-2xl font-semibold text-slate-800 dark:text-slate-100 mb-2 sm:mb-3">
+            <CardContent className="p-3 sm:p-4 text-center">
+              <div className="max-w-lg mx-auto">
+                <Terminal className="w-8 h-8 sm:w-10 sm:h-10 text-slate-300 dark:text-slate-600 mx-auto mb-2 sm:mb-3" />
+                <h3 className="text-base sm:text-lg lg:text-xl font-semibold text-slate-800 dark:text-slate-100 mb-2">
                   Witaj w Wyszukiwarce poleceń CMD
                 </h3>
-                <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 mb-3 sm:mb-4 leading-relaxed">
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-3 leading-relaxed">
                   Wprowadź opis lub słowo kluczowe w polu wyszukiwania powyżej, aby znaleźć odpowiednie polecenia 
                   wiersza poleceń Windows. Możesz również skorzystać z szybkich akcji lub generatora skryptów .bat.
                 </p>
-                <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <div className="flex flex-col sm:flex-row gap-2 justify-center">
                   <Button
+                    size="sm"
                     onClick={() => {
                       setSearchQuery("wylistuj pliki");
                       searchMutation.mutate("wylistuj pliki");
                     }}
                     className="bg-blue-600 hover:bg-blue-700 text-white"
                   >
-                    <Search className="w-4 h-4 mr-2" />
+                    <Search className="w-3 h-3 mr-1" />
                     Przykładowe wyszukiwanie
                   </Button>
                   <Button
+                    size="sm"
                     variant="outline"
                     onClick={() => setShowGenerator(true)}
                   >
-                    <FileText className="w-4 h-4 mr-2" />
+                    <FileText className="w-3 h-3 mr-1" />
                     Otwórz generator skryptów
                   </Button>
                 </div>
@@ -810,8 +812,8 @@ pause
       </main>
 
       {/* Footer */}
-      <footer className="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 mt-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <footer className="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 mt-8 sm:mt-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center space-x-3 mb-4 md:mb-0">
               <div className="bg-primary rounded-lg p-2">
