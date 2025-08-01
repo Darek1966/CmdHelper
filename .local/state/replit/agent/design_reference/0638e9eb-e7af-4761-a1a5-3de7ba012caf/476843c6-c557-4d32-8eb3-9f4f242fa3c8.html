@@ -1,0 +1,384 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windows CMD Command Search Tool</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#2563EB',
+                        secondary: '#64748B',
+                    }
+                }
+            }
+        };
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="font-inter bg-slate-50 min-h-screen">
+    <!-- @COMPONENT: Header -->
+    <header class="bg-white shadow-sm border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-primary rounded-lg p-2">
+                        <i class="fas fa-terminal text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-semibold text-slate-800">CMD Search Tool</h1>
+                        <p class="text-sm text-slate-500">Windows Command Database</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                        <span class="text-sm text-slate-600">Database Connected</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- @END_COMPONENT: Header -->
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- @COMPONENT: SearchInterface -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-8">
+            <div class="mb-6">
+                <h2 class="text-2xl font-semibold text-slate-800 mb-2">Search Windows CMD Commands</h2>
+                <p class="text-slate-600">Enter a description or keyword to find the appropriate Windows command line instruction.</p>
+            </div>
+
+            <form class="space-y-4" data-implementation="Should connect to PostgreSQL database and perform search">
+                <div class="relative">
+                    <label for="search-query" class="block text-sm font-medium text-slate-700 mb-2">
+                        Command Query
+                    </label>
+                    <div class="relative">
+                        <input 
+                            type="text" 
+                            id="search-query"
+                            data-bind="searchQuery"
+                            placeholder="e.g., list all files in directory, copy files, network configuration..."
+                            class="w-full px-4 py-3 pl-11 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200 text-slate-800 placeholder-slate-400"
+                            data-mock="true"
+                        />
+                        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <button 
+                        type="submit"
+                        data-event="click:handleSearch"
+                        data-implementation="Should validate input and execute database search"
+                        class="flex-1 sm:flex-none bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:ring-offset-2 transition-all duration-200 flex items-center justify-center space-x-2"
+                    >
+                        <i class="fas fa-search"></i>
+                        <span>Search Commands</span>
+                    </button>
+                    <button 
+                        type="button"
+                        data-event="click:handleClear"
+                        class="flex-1 sm:flex-none bg-slate-200 text-slate-700 px-6 py-3 rounded-lg font-medium hover:bg-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-400/20 focus:ring-offset-2 transition-all duration-200 flex items-center justify-center space-x-2"
+                    >
+                        <i class="fas fa-times"></i>
+                        <span>Clear</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+        <!-- @END_COMPONENT: SearchInterface -->
+
+        <!-- @COMPONENT: SearchResults -->
+        <div class="space-y-6">
+            <!-- Search Statistics -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-semibold text-slate-800 mb-1">Search Results</h3>
+                        <p class="text-slate-600" data-bind="searchStats">Found <span data-mock="true">8 commands</span> matching your query</p>
+                    </div>
+                    <div class="flex items-center space-x-2 text-sm text-slate-500">
+                        <i class="fas fa-clock"></i>
+                        <span data-bind="searchTime" data-mock="true">0.23s</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- @MAP: searchResults.map(result => ( -->
+            <!-- Command Result Card 1 -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow duration-200">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="flex-1">
+                        <h4 class="text-lg font-semibold text-slate-800 mb-2" data-bind="result.command" data-mock="true">dir</h4>
+                        <p class="text-slate-600 mb-3" data-bind="result.description" data-mock="true">Lists files and subdirectories in a directory</p>
+                    </div>
+                    <button class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1 rounded-md text-sm font-medium transition-colors duration-200 flex items-center space-x-1">
+                        <i class="fas fa-copy"></i>
+                        <span>Copy</span>
+                    </button>
+                </div>
+                
+                <div class="bg-slate-900 rounded-lg p-4 mb-4">
+                    <code class="text-green-400 font-mono text-sm" data-bind="result.syntax" data-mock="true">dir [drive:][path][filename] [/A[[:]attributes]] [/B] [/C] [/D] [/L] [/N] [/O[[:]sortorder]] [/P] [/Q] [/R] [/S] [/T[[:]timefield]] [/W] [/X] [/4]</code>
+                </div>
+
+                <div class="space-y-3">
+                    <div>
+                        <h5 class="font-medium text-slate-800 mb-2">Common Examples:</h5>
+                        <div class="space-y-2">
+                            <div class="bg-slate-50 rounded-lg p-3">
+                                <code class="text-slate-800 font-mono text-sm" data-mock="true">dir C:\</code>
+                                <p class="text-slate-600 text-sm mt-1">List contents of C: drive</p>
+                            </div>
+                            <div class="bg-slate-50 rounded-lg p-3">
+                                <code class="text-slate-800 font-mono text-sm" data-mock="true">dir /s *.txt</code>
+                                <p class="text-slate-600 text-sm mt-1">Find all .txt files in current directory and subdirectories</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between mt-4 pt-4 border-t border-slate-200">
+                    <div class="flex items-center space-x-4 text-sm text-slate-500">
+                        <span class="flex items-center space-x-1">
+                            <i class="fas fa-tag"></i>
+                            <span data-bind="result.category" data-mock="true">File Management</span>
+                        </span>
+                        <span class="flex items-center space-x-1">
+                            <i class="fas fa-star"></i>
+                            <span data-bind="result.difficulty" data-mock="true">Beginner</span>
+                        </span>
+                    </div>
+                    <button class="text-primary hover:text-blue-700 text-sm font-medium flex items-center space-x-1">
+                        <span>View Details</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Command Result Card 2 -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow duration-200">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="flex-1">
+                        <h4 class="text-lg font-semibold text-slate-800 mb-2" data-bind="result.command" data-mock="true">xcopy</h4>
+                        <p class="text-slate-600 mb-3" data-bind="result.description" data-mock="true">Copies files and directory trees</p>
+                    </div>
+                    <button class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1 rounded-md text-sm font-medium transition-colors duration-200 flex items-center space-x-1">
+                        <i class="fas fa-copy"></i>
+                        <span>Copy</span>
+                    </button>
+                </div>
+                
+                <div class="bg-slate-900 rounded-lg p-4 mb-4">
+                    <code class="text-green-400 font-mono text-sm" data-bind="result.syntax" data-mock="true">xcopy source [destination] [/A | /M] [/D[:date]] [/P] [/S [/E]] [/V] [/W] [/C] [/I] [/Q] [/F] [/L] [/G] [/H] [/R] [/T] [/U] [/K] [/N] [/O] [/X] [/Y] [/-Y] [/Z] [/B] [/J] [/EXCLUDE:file1[+file2][+file3]...]</code>
+                </div>
+
+                <div class="space-y-3">
+                    <div>
+                        <h5 class="font-medium text-slate-800 mb-2">Common Examples:</h5>
+                        <div class="space-y-2">
+                            <div class="bg-slate-50 rounded-lg p-3">
+                                <code class="text-slate-800 font-mono text-sm" data-mock="true">xcopy C:\source D:\destination /E /I</code>
+                                <p class="text-slate-600 text-sm mt-1">Copy entire directory structure including empty directories</p>
+                            </div>
+                            <div class="bg-slate-50 rounded-lg p-3">
+                                <code class="text-slate-800 font-mono text-sm" data-mock="true">xcopy *.txt D:\backup /S</code>
+                                <p class="text-slate-600 text-sm mt-1">Copy all .txt files including subdirectories</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between mt-4 pt-4 border-t border-slate-200">
+                    <div class="flex items-center space-x-4 text-sm text-slate-500">
+                        <span class="flex items-center space-x-1">
+                            <i class="fas fa-tag"></i>
+                            <span data-bind="result.category" data-mock="true">File Management</span>
+                        </span>
+                        <span class="flex items-center space-x-1">
+                            <i class="fas fa-star"></i>
+                            <span data-bind="result.difficulty" data-mock="true">Intermediate</span>
+                        </span>
+                    </div>
+                    <button class="text-primary hover:text-blue-700 text-sm font-medium flex items-center space-x-1">
+                        <span>View Details</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Command Result Card 3 -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow duration-200">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="flex-1">
+                        <h4 class="text-lg font-semibold text-slate-800 mb-2" data-bind="result.command" data-mock="true">ipconfig</h4>
+                        <p class="text-slate-600 mb-3" data-bind="result.description" data-mock="true">Displays and manages network configuration</p>
+                    </div>
+                    <button class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1 rounded-md text-sm font-medium transition-colors duration-200 flex items-center space-x-1">
+                        <i class="fas fa-copy"></i>
+                        <span>Copy</span>
+                    </button>
+                </div>
+                
+                <div class="bg-slate-900 rounded-lg p-4 mb-4">
+                    <code class="text-green-400 font-mono text-sm" data-bind="result.syntax" data-mock="true">ipconfig [/all | /release | /renew | /flushdns | /displaydns | /registerdns | /showclassid | /setclassid]</code>
+                </div>
+
+                <div class="space-y-3">
+                    <div>
+                        <h5 class="font-medium text-slate-800 mb-2">Common Examples:</h5>
+                        <div class="space-y-2">
+                            <div class="bg-slate-50 rounded-lg p-3">
+                                <code class="text-slate-800 font-mono text-sm" data-mock="true">ipconfig /all</code>
+                                <p class="text-slate-600 text-sm mt-1">Display full network configuration details</p>
+                            </div>
+                            <div class="bg-slate-50 rounded-lg p-3">
+                                <code class="text-slate-800 font-mono text-sm" data-mock="true">ipconfig /flushdns</code>
+                                <p class="text-slate-600 text-sm mt-1">Clear DNS resolver cache</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between mt-4 pt-4 border-t border-slate-200">
+                    <div class="flex items-center space-x-4 text-sm text-slate-500">
+                        <span class="flex items-center space-x-1">
+                            <i class="fas fa-tag"></i>
+                            <span data-bind="result.category" data-mock="true">Network</span>
+                        </span>
+                        <span class="flex items-center space-x-1">
+                            <i class="fas fa-star"></i>
+                            <span data-bind="result.difficulty" data-mock="true">Beginner</span>
+                        </span>
+                    </div>
+                    <button class="text-primary hover:text-blue-700 text-sm font-medium flex items-center space-x-1">
+                        <span>View Details</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+            <!-- @END_MAP )) -->
+
+            <!-- Load More Results -->
+            <div class="text-center py-6">
+                <button class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-6 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center space-x-2 mx-auto">
+                    <i class="fas fa-chevron-down"></i>
+                    <span>Load More Results</span>
+                </button>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: SearchResults -->
+
+        <!-- @COMPONENT: QuickActions -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mt-8">
+            <h3 class="text-lg font-semibold text-slate-800 mb-4">Quick Actions</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <button class="flex items-center space-x-3 p-3 rounded-lg border border-slate-200 hover:border-primary hover:bg-primary/5 transition-all duration-200">
+                    <div class="bg-blue-100 text-blue-700 p-2 rounded-lg">
+                        <i class="fas fa-folder"></i>
+                    </div>
+                    <div class="text-left">
+                        <p class="font-medium text-slate-800">File Operations</p>
+                        <p class="text-sm text-slate-500">Browse file commands</p>
+                    </div>
+                </button>
+                
+                <button class="flex items-center space-x-3 p-3 rounded-lg border border-slate-200 hover:border-primary hover:bg-primary/5 transition-all duration-200">
+                    <div class="bg-green-100 text-green-700 p-2 rounded-lg">
+                        <i class="fas fa-network-wired"></i>
+                    </div>
+                    <div class="text-left">
+                        <p class="font-medium text-slate-800">Network Commands</p>
+                        <p class="text-sm text-slate-500">Network troubleshooting</p>
+                    </div>
+                </button>
+                
+                <button class="flex items-center space-x-3 p-3 rounded-lg border border-slate-200 hover:border-primary hover:bg-primary/5 transition-all duration-200">
+                    <div class="bg-purple-100 text-purple-700 p-2 rounded-lg">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <div class="text-left">
+                        <p class="font-medium text-slate-800">System Tools</p>
+                        <p class="text-sm text-slate-500">System management</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: QuickActions -->
+    </main>
+
+    <!-- @COMPONENT: Footer -->
+    <footer class="bg-white border-t border-slate-200 mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center space-x-3 mb-4 md:mb-0">
+                    <div class="bg-primary rounded-lg p-2">
+                        <i class="fas fa-terminal text-white"></i>
+                    </div>
+                    <div>
+                        <p class="font-semibold text-slate-800">CMD Search Tool</p>
+                        <p class="text-sm text-slate-500">Windows Command Database</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-6 text-sm text-slate-500">
+                    <span>Database Status: Connected</span>
+                    <span>•</span>
+                    <span data-bind="commandCount" data-mock="true">2,847 commands indexed</span>
+                    <span>•</span>
+                    <span>Last Updated: Today</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- @END_COMPONENT: Footer -->
+
+    <script>
+        // TODO: Implement PostgreSQL database connection and search functionality
+        // TODO: Add form validation and sanitization
+        // TODO: Implement loading states and error handling
+        // TODO: Add pagination for search results
+        // TODO: Implement copy-to-clipboard functionality
+        
+        (function() {
+            // Basic UI interactions for demonstration
+            const searchForm = document.querySelector('form');
+            const searchInput = document.getElementById('search-query');
+            const clearButton = document.querySelector('[data-event="click:handleClear"]');
+            
+            // Mock search functionality for demonstration
+            if (searchForm) {
+                searchForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    // TODO: Replace with actual database search
+                    console.log('Search query:', searchInput.value);
+                });
+            }
+            
+            // Clear functionality
+            if (clearButton) {
+                clearButton.addEventListener('click', function() {
+                    searchInput.value = '';
+                    searchInput.focus();
+                });
+            }
+            
+            // Copy button functionality
+            document.querySelectorAll('button:has(i.fa-copy)').forEach(button => {
+                button.addEventListener('click', function() {
+                    // TODO: Implement copy to clipboard
+                    console.log('Copy command to clipboard');
+                });
+            });
+        })();
+    </script>
+</body>
+</html>
