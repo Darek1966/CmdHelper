@@ -19,6 +19,14 @@ export const commands = pgTable("commands", {
   examples: text("examples").array().notNull().default([]),
 });
 
+export const polecenia_cmd = pgTable("polecenia_cmd", {
+  id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
+  opis_krotki: text("opis_krotki"),
+  polecenie: text("polecenie"),
+  opis_szczegolowy: text("opis_szczegolowy"),
+  slowa_kluczowe: text("slowa_kluczowe").array(),
+});
+
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
@@ -37,3 +45,4 @@ export type User = typeof users.$inferSelect;
 export type Command = typeof commands.$inferSelect;
 export type InsertCommand = z.infer<typeof insertCommandSchema>;
 export type SearchCommand = z.infer<typeof searchCommandSchema>;
+export type PoleceniaCMD = typeof polecenia_cmd.$inferSelect;

@@ -5,8 +5,8 @@ import * as schema from "@shared/schema";
 
 neonConfig.webSocketConstructor = ws;
 
-// Use the provided Neon database URL
-const DATABASE_URL = process.env.DATABASE_URL || 'postgresql://neondb_owner:npg_LZhn7Kl8ASPF@ep-weathered-recipe-a28prumt-pooler.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require';
+// Force use of the provided Neon database URL
+const DATABASE_URL = 'postgresql://neondb_owner:npg_LZhn7Kl8ASPF@ep-weathered-recipe-a28prumt-pooler.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require';
 
 if (!DATABASE_URL) {
   throw new Error(

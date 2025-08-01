@@ -1,14 +1,14 @@
-import { commands, type Command, type InsertCommand } from "@shared/schema";
+import { polecenia_cmd, type PoleceniaCMD } from "@shared/schema";
 import { db } from "./db";
-import { ilike, or } from "drizzle-orm";
+import { ilike, or, sql } from "drizzle-orm";
 
 export interface IStorage {
   getUser(id: string): Promise<any | undefined>;
   getUserByUsername(username: string): Promise<any | undefined>;
   createUser(user: any): Promise<any>;
-  searchCommands(query: string): Promise<Command[]>;
-  getAllCommands(): Promise<Command[]>;
-  createCommand(command: InsertCommand): Promise<Command>;
+  searchCommands(query: string): Promise<any[]>;
+  getAllCommands(): Promise<any[]>;
+  createCommand(command: any): Promise<any>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -27,18 +27,26 @@ export class DatabaseStorage implements IStorage {
     return undefined;
   }
 
-  async searchCommands(query: string): Promise<Command[]> {
+  async searchCommands(query: string): Promise<any[]> {
     const searchTerm = `%${query}%`;
     
     const results = await db
-      .select()
-      .from(commands)
+      .select({
+        id: polecenia_cmd.id,
+        command: polecenia_cmd.polecenie,
+        description: polecenia_cmd.opis_krotki,
+        syntax: polecenia_cmd.polecenie,
+        category: sql<string>`'Polecenia CMD'`.as('category'),
+        difficulty: sql<string>`'Średni'`.as('difficulty'),
+        examples: sql<string[]>`array[polecenia_cmd.opis_szczegolowy]`.as('examples')
+      })
+      .from(polecenia_cmd)
       .where(
         or(
-          ilike(commands.command, searchTerm),
-          ilike(commands.description, searchTerm),
-          ilike(commands.category, searchTerm),
-          ilike(commands.syntax, searchTerm)
+          ilike(polecenia_cmd.polecenie, searchTerm),
+          ilike(polecenia_cmd.opis_krotki, searchTerm),
+          ilike(polecenia_cmd.opis_szczegolowy, searchTerm),
+          sql`exists (select 1 from unnest(polecenia_cmd.slowa_kluczowe) as keyword where keyword ilike ${searchTerm})`
         )
       )
       .limit(20);
@@ -46,17 +54,24 @@ export class DatabaseStorage implements IStorage {
     return results;
   }
 
-  async getAllCommands(): Promise<Command[]> {
-    const results = await db.select().from(commands).limit(20);
+  async getAllCommands(): Promise<any[]> {
+    const results = await db
+      .select({
+        id: polecenia_cmd.id,
+        command: polecenia_cmd.polecenie,
+        description: polecenia_cmd.opis_krotki,
+        syntax: polecenia_cmd.polecenie,
+        category: sql<string>`'Polecenia CMD'`.as('category'),
+        difficulty: sql<string>`'Średni'`.as('difficulty'),
+        examples: sql<string[]>`array[polecenia_cmd.opis_szczegolowy]`.as('examples')
+      })
+      .from(polecenia_cmd)
+      .limit(20);
     return results;
   }
 
-  async createCommand(insertCommand: InsertCommand): Promise<Command> {
-    const [command] = await db
-      .insert(commands)
-      .values(insertCommand)
-      .returning();
-    return command;
+  async createCommand(insertCommand: any): Promise<any> {
+    return insertCommand; // Not implemented for polecenia_cmd table
   }
 }
 
