@@ -498,13 +498,13 @@ pause
         {/* Welcome Message */}
         {!hasSearched && !showGenerator && (
           <Card className="border-slate-200 dark:border-slate-700">
-            <CardContent className="p-12 text-center">
-              <div className="max-w-2xl mx-auto">
-                <Terminal className="w-16 h-16 text-slate-300 dark:text-slate-600 mx-auto mb-6" />
-                <h3 className="text-2xl font-semibold text-slate-800 dark:text-slate-100 mb-4">
+            <CardContent className="p-4 sm:p-6 text-center">
+              <div className="max-w-xl mx-auto">
+                <Terminal className="w-10 h-10 sm:w-12 sm:h-12 text-slate-300 dark:text-slate-600 mx-auto mb-3 sm:mb-4" />
+                <h3 className="text-lg sm:text-xl lg:text-2xl font-semibold text-slate-800 dark:text-slate-100 mb-2 sm:mb-3">
                   Witaj w Wyszukiwarce poleceń CMD
                 </h3>
-                <p className="text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">
+                <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 mb-3 sm:mb-4 leading-relaxed">
                   Wprowadź opis lub słowo kluczowe w polu wyszukiwania powyżej, aby znaleźć odpowiednie polecenia 
                   wiersza poleceń Windows. Możesz również skorzystać z szybkich akcji lub generatora skryptów .bat.
                 </p>
@@ -720,7 +720,7 @@ pause
                           variant="outline"
                           size="sm"
                           onClick={() => addToScript(command)}
-                          disabled={selectedCommands.some(cmd => cmd.id === command.id)}
+                          disabled={selectedCommands.some(cmd => cmd.id=== command.id)}
                           className="border-red-200 dark:border-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
                         >
                           <Plus className="w-4 h-4 mr-1" />
