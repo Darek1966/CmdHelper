@@ -204,9 +204,11 @@ export default function Home() {
     }
 
     const scriptContent = `@echo off
-REM Skrypt wygenerowany przez Wyszukiwarkę poleceń CMD
+chcp 65001 >nul 2>&1
+REM Ustawienie kodowania UTF-8 dla polskich znakow
+REM Skrypt wygenerowany przez Wyszukiwarke polecen CMD
 REM Data utworzenia: ${new Date().toLocaleString('pl-PL')}
-REM Liczba poleceń: ${selectedCommands.length}
+REM Liczba polecen: ${selectedCommands.length}
 
 echo Uruchamianie skryptu: ${scriptName}.bat
 echo.
@@ -217,12 +219,13 @@ echo Wykonuje: ${cmd.command}
 ${cmd.command}
 echo.`).join('')}
 
-echo Skrypt zakończony pomyślnie!
+echo Skrypt zakonczony pomyslnie!
 pause
 `;
 
-    // Create and download the file
-    const blob = new Blob([scriptContent], { type: 'text/plain;charset=utf-8' });
+    // Create and download the file with UTF-8 BOM for proper Polish character support
+    const bom = '\uFEFF';
+    const blob = new Blob([bom + scriptContent], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
@@ -234,7 +237,7 @@ pause
 
     toast({
       title: "Skrypt wygenerowany!",
-      description: `Plik ${scriptName}.bat został pobrany`,
+      description: `Plik ${scriptName}.bat został pobrany z obsługą polskich znaków`,
     });
   };
 
@@ -242,9 +245,11 @@ pause
     if (selectedCommands.length === 0) return;
 
     const scriptContent = `@echo off
-REM Skrypt wygenerowany przez Wyszukiwarkę poleceń CMD
+chcp 65001 >nul 2>&1
+REM Ustawienie kodowania UTF-8 dla polskich znakow
+REM Skrypt wygenerowany przez Wyszukiwarke polecen CMD
 REM Data utworzenia: ${new Date().toLocaleString('pl-PL')}
-REM Liczba poleceń: ${selectedCommands.length}
+REM Liczba polecen: ${selectedCommands.length}
 
 echo Uruchamianie skryptu: ${scriptName}.bat
 echo.
@@ -255,7 +260,7 @@ echo Wykonuje: ${cmd.command}
 ${cmd.command}
 echo.`).join('')}
 
-echo Skrypt zakończony pomyślnie!
+echo Skrypt zakonczony pomyslnie!
 pause
 `;
 
