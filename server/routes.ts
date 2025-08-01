@@ -55,6 +55,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get total records count endpoint
+  app.get("/api/commands/total", async (req, res) => {
+    try {
+      const totalCountResult = await db.select({ count: sql<number>`count(*)` }).from(polecenia_cmd);
+      const totalCount = totalCountResult[0]?.count || 0;
+      
+      res.json({ count: totalCount });
+    } catch (error) {
+      console.error("Get total count error:", error);
+      res.status(500).json({ 
+        message: "Failed to get total count. Please check database connection." 
+      });
+    }
+  });
+
   // Health check endpoint
   app.get("/api/health", async (req, res) => {
     try {

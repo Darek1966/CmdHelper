@@ -50,6 +50,16 @@ export default function Home() {
     refetchInterval: 30000, // Check every 30 seconds
   });
 
+  // Total records count query
+  const { data: totalRecordsData } = useQuery({
+    queryKey: ["/api/commands/total"],
+    queryFn: async () => {
+      const response = await apiRequest("GET", "/api/commands/total");
+      return response.json() as Promise<{ count: number }>;
+    },
+    refetchInterval: 60000, // Check every minute
+  });
+
   // Search mutation
   const searchMutation = useMutation({
     mutationFn: async (query: string) => {
@@ -291,7 +301,7 @@ pause
                   <>
                     <CheckCircle className="w-4 h-4 text-green-500" />
                     <span className="text-sm text-slate-600 dark:text-slate-300">
-                      Baza połączona ({data?.count || 0} rekordów)
+                      Baza połączona ({totalRecordsData?.count || 0} rekordów)
                     </span>
                   </>
                 ) : (
@@ -817,7 +827,7 @@ pause
               <div className="flex items-center space-x-6">
                 <span>Status bazy: {healthData?.status === "connected" ? "Neon Database ✓" : "Rozłączona"}</span>
                 <span>•</span>
-                <span>Dostępnych poleceń: {data?.count || 0}</span>
+                <span>Dostępnych poleceń: {totalRecordsData?.count || 0}</span>
                 <span>•</span>
                 <span>Tabela: polecenia_cmd</span>
               </div>
