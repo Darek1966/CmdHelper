@@ -78,7 +78,7 @@ export default function Home() {
       setShowSuggestions(false);
       return;
     }
-    
+
     try {
       const response = await apiRequest("POST", "/api/commands/search", { query });
       const data = await response.json() as SearchResponse;
@@ -101,7 +101,7 @@ export default function Home() {
         setSuggestions([]);
       }
     }, 300);
-    
+
     return () => clearTimeout(timer);
   }, [searchQuery, getSuggestions]);
 
@@ -266,7 +266,7 @@ export default function Home() {
                 </Button>
               </div>
             </form>
-            
+
             {/* Suggestions dropdown */}
             {showSuggestions && suggestions.length > 0 && (
               <div className="relative mt-2">
@@ -321,7 +321,7 @@ export default function Home() {
                   <p className="text-sm text-slate-500 dark:text-slate-400">Operacje na katalogach</p>
                 </div>
               </Button>
-              
+
               <Button
                 variant="outline"
                 className="h-auto p-3 justify-start hover:border-green-500 hover:bg-green-50 dark:hover:bg-green-900/20 border-slate-200 dark:border-slate-700"
@@ -338,7 +338,7 @@ export default function Home() {
                   <p className="text-sm text-slate-500 dark:text-slate-400">Operacje na plikach</p>
                 </div>
               </Button>
-              
+
               <Button
                 variant="outline"
                 className="h-auto p-3 justify-start hover:border-purple-500 hover:bg-purple-50 dark:hover:bg-purple-900/20 border-slate-200 dark:border-slate-700"
@@ -377,33 +377,33 @@ export default function Home() {
         </Card>
 
         {/* Search Results */}
-        {(data || isLoading) && (
-          <div className="space-y-6">
-            {/* Search Statistics */}
-            <Card className="border-slate-200 dark:border-slate-700">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-1">Wyniki wyszukiwania</h3>
-                    {isLoading ? (
-                      <Skeleton className="h-4 w-48" />
-                    ) : (
-                      <p className="text-slate-600 dark:text-slate-400">
-                        Znaleziono {data?.count || 0} poleceń pasujących do zapytania
-                      </p>
-                    )}
-                  </div>
-                  <div className="flex items-center space-x-2 text-sm text-slate-500 dark:text-slate-400">
-                    <Clock className="w-4 h-4" />
-                    {isLoading ? (
-                      <Skeleton className="h-4 w-12" />
-                    ) : (
-                      <span>{data?.searchTime?.toFixed(2) || 0}s</span>
-                    )}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            {(data || isLoading) && (
+              <div className="space-y-6">
+                {/* Search Statistics */}
+                <Card className="border-slate-200 dark:border-slate-700 animate-fade-in-up">
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-1">Wyniki wyszukiwania</h3>
+                        {isLoading ? (
+                          <Skeleton className="h-4 w-48 animate-shimmer" />
+                        ) : (
+                          <p className="text-slate-600 dark:text-slate-400 animate-slide-in-left">
+                            Znaleziono {data?.count || 0} poleceń pasujących do zapytania
+                          </p>
+                        )}
+                      </div>
+                      <div className="flex items-center space-x-2 text-sm text-slate-500 dark:text-slate-400">
+                        <Clock className="w-4 h-4" />
+                        {isLoading ? (
+                          <Skeleton className="h-4 w-12 animate-shimmer" />
+                        ) : (
+                          <span className="animate-scale-in">{data?.searchTime?.toFixed(2) || 0}s</span>
+                        )}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
 
             {/* Command Results */}
             {isLoading ? (
@@ -483,7 +483,7 @@ export default function Home() {
                           </div>
                         </div>
                       )}
-                      
+
                       {command.examples && command.examples.length > 0 && (
                         <div>
                           <h5 className="font-semibold text-slate-800 dark:text-slate-100 mb-3 flex items-center gap-2">
@@ -562,7 +562,7 @@ export default function Home() {
                 <p className="text-sm text-slate-500 dark:text-slate-400">Baza poleceń Windows</p>
               </div>
             </div>
-            
+
             <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-6 text-sm text-slate-500 dark:text-slate-400">
               <div className="flex items-center space-x-6">
                 <span>Status bazy: {healthData?.status === "connected" ? "Neon Database ✓" : "Rozłączona"}</span>
