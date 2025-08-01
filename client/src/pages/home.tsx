@@ -9,7 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { Terminal, Search, Copy, Clock, Tag, Star, ArrowRight, X, Folder, Network, Settings, CheckCircle, AlertCircle } from "lucide-react";
+import { Terminal, Search, Copy, Clock, Tag, Star, ArrowRight, X, Folder, Network, Settings, CheckCircle, AlertCircle, FileText, Plus, Download, Trash2 } from "lucide-react";
 import type { Command } from "@shared/schema";
 
 interface SearchResponse {
@@ -38,6 +38,9 @@ export default function Home() {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(-1);
+  const [selectedCommands, setSelectedCommands] = useState<Command[]>([]);
+  const [showGenerator, setShowGenerator] = useState(false);
+  const [scriptName, setScriptName] = useState("moj_skrypt");
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -180,6 +183,89 @@ export default function Home() {
     }
   };
 
+  const addToScript = (command: Command) => {
+    if (!selectedCommands.find(cmd => cmd.id === command.id)) {
+      setSelectedCommands([...selectedCommands, command]);
+      toast({
+        title: "Dodano do skryptu!",
+        description: `Polecenie "${command.command}" zostało dodane do generatora skryptów`,
+      });
+    }
+  };
+
+  const removeFromScript = (commandId: number) => {
+    setSelectedCommands(selectedCommands.filter(cmd => cmd.id !== commandId));
+  };
+
+  const generateBatchScript = () => {
+    if (selectedCommands.length === 0) {
+      toast({
+        title: "Brak poleceń",
+        description: "Dodaj przynajmniej jedno polecenie do skryptu",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const scriptContent = `@echo off
+REM Skrypt wygenerowany przez Wyszukiwarkę poleceń CMD
+REM Data utworzenia: ${new Date().toLocaleString('pl-PL')}
+REM Liczba poleceń: ${selectedCommands.length}
+
+echo Uruchamianie skryptu: ${scriptName}.bat
+echo.
+
+${selectedCommands.map((cmd, index) => `
+REM ${index + 1}. ${cmd.description}
+echo Wykonuje: ${cmd.command}
+${cmd.command}
+echo.`).join('')}
+
+echo Skrypt zakończony pomyślnie!
+pause
+`;
+
+    // Create and download the file
+    const blob = new Blob([scriptContent], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${scriptName}.bat`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    toast({
+      title: "Skrypt wygenerowany!",
+      description: `Plik ${scriptName}.bat został pobrany`,
+    });
+  };
+
+  const copyScriptToClipboard = () => {
+    if (selectedCommands.length === 0) return;
+
+    const scriptContent = `@echo off
+REM Skrypt wygenerowany przez Wyszukiwarkę poleceń CMD
+REM Data utworzenia: ${new Date().toLocaleString('pl-PL')}
+REM Liczba poleceń: ${selectedCommands.length}
+
+echo Uruchamianie skryptu: ${scriptName}.bat
+echo.
+
+${selectedCommands.map((cmd, index) => `
+REM ${index + 1}. ${cmd.description}
+echo Wykonuje: ${cmd.command}
+${cmd.command}
+echo.`).join('')}
+
+echo Skrypt zakończony pomyślnie!
+pause
+`;
+
+    copyToClipboard(scriptContent);
+  };
+
   const data = searchMutation.data || initialData;
   const isLoading = searchMutation.isPending || initialLoading;
 
@@ -312,7 +398,7 @@ export default function Home() {
         <Card className="mb-8 border-slate-200 dark:border-slate-700">
           <CardContent className="p-6">
             <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-4">Szybkie akcje</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
               <Button
                 variant="outline"
                 className="h-auto p-3 justify-start hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 border-slate-200 dark:border-slate-700"
@@ -380,9 +466,117 @@ export default function Home() {
                   <p className="text-sm text-slate-500 dark:text-slate-400">Polecenia wyświetlające</p>
                 </div>
               </Button>
+
+              <Button
+                variant="outline"
+                className="h-auto p-3 justify-start hover:border-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 border-slate-200 dark:border-slate-700"
+                onClick={() => setShowGenerator(!showGenerator)}
+              >
+                <div className="bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 p-2 rounded-lg mr-3">
+                  <FileText className="w-4 h-4" />
+                </div>
+                <div className="text-left">
+                  <p className="font-medium text-slate-800 dark:text-slate-100">Generator .bat</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Twórz skrypty batch</p>
+                </div>
+              </Button>
             </div>
           </CardContent>
         </Card>
+
+        {/* Batch Script Generator */}
+        {showGenerator && (
+          <Card className="mb-8 border-slate-200 dark:border-slate-700">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-2">Generator skryptów .bat</h3>
+                  <p className="text-slate-600 dark:text-slate-400">Wybierz polecenia z wyników wyszukiwania, aby utworzyć skrypt batch</p>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowGenerator(false)}
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex gap-4 items-end">
+                  <div className="flex-1">
+                    <Label htmlFor="script-name" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                      Nazwa skryptu
+                    </Label>
+                    <Input
+                      id="script-name"
+                      type="text"
+                      value={scriptName}
+                      onChange={(e) => setScriptName(e.target.value)}
+                      placeholder="np. backup_system"
+                      className="border-slate-200 dark:border-slate-700"
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={generateBatchScript}
+                      disabled={selectedCommands.length === 0}
+                      className="bg-red-600 hover:bg-red-700 text-white"
+                    >
+                      <Download className="w-4 h-4 mr-2" />
+                      Pobierz .bat
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={copyScriptToClipboard}
+                      disabled={selectedCommands.length === 0}
+                    >
+                      <Copy className="w-4 h-4 mr-2" />
+                      Kopiuj kod
+                    </Button>
+                  </div>
+                </div>
+
+                {selectedCommands.length > 0 ? (
+                  <div>
+                    <h4 className="font-medium text-slate-800 dark:text-slate-100 mb-3">
+                      Wybrane polecenia ({selectedCommands.length}):
+                    </h4>
+                    <div className="space-y-2">
+                      {selectedCommands.map((command, index) => (
+                        <div key={command.id} className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
+                          <span className="text-sm font-medium text-slate-500 dark:text-slate-400 w-6">
+                            {index + 1}.
+                          </span>
+                          <code className="font-mono text-sm bg-slate-900 dark:bg-slate-950 text-green-400 px-2 py-1 rounded">
+                            {command.command}
+                          </code>
+                          <span className="text-sm text-slate-600 dark:text-slate-300 flex-1">
+                            {command.description}
+                          </span>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => removeFromScript(command.id)}
+                            className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-slate-500 dark:text-slate-400">
+                    <FileText className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                    <p>Żadne polecenia nie zostały jeszcze dodane do skryptu</p>
+                    <p className="text-sm">Użyj przycisków "Dodaj do skryptu" przy poleceniach poniżej</p>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Search Results */}
             {(data || isLoading) && (
@@ -473,6 +667,16 @@ export default function Home() {
                         >
                           <Copy className="w-4 h-4 mr-1" />
                           Kopiuj
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => addToScript(command)}
+                          disabled={selectedCommands.some(cmd => cmd.id === command.id)}
+                          className="border-red-200 dark:border-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+                        >
+                          <Plus className="w-4 h-4 mr-1" />
+                          {selectedCommands.some(cmd => cmd.id === command.id) ? "Dodane" : "Do skryptu"}
                         </Button>
                       </div>
                     </div>
