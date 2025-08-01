@@ -428,12 +428,18 @@ export default function Home() {
               </div>
             </div>
             
-            <div className="flex items-center space-x-6 text-sm text-slate-500 dark:text-slate-400">
-              <span>Status bazy: {healthData?.status === "connected" ? "Neon Database ✓" : "Rozłączona"}</span>
-              <span>•</span>
-              <span>Dostępnych poleceń: {data?.count || 0}</span>
-              <span>•</span>
-              <span>Tabela: polecenia_cmd</span>
+            <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-6 text-sm text-slate-500 dark:text-slate-400">
+              <div className="flex items-center space-x-6">
+                <span>Status bazy: {healthData?.status === "connected" ? "Neon Database ✓" : "Rozłączona"}</span>
+                <span>•</span>
+                <span>Dostępnych poleceń: {data?.count || 0}</span>
+                <span>•</span>
+                <span>Tabela: polecenia_cmd</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <span>•</span>
+                <span>Autor: <span className="font-medium text-slate-600 dark:text-slate-300">netdark_1966</span></span>
+              </div>
             </div>
           </div>
         </div>
