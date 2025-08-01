@@ -355,7 +355,7 @@ export default function Home() {
                       </div>
                     </div>
 
-                    {command.examples && command.examples.length > 0 && command.examples[0] && (
+                    {(command as any).detailed_description && (
                       <div className="space-y-4">
                         <div>
                           <h5 className="font-semibold text-slate-800 dark:text-slate-100 mb-3 flex items-center gap-2">
@@ -364,24 +364,43 @@ export default function Home() {
                           </h5>
                           <div className="bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 rounded-lg p-4 border-l-4 border-blue-500">
                             <p className="text-slate-700 dark:text-slate-300 leading-relaxed">
-                              {command.examples[0]}
+                              {(command as any).detailed_description}
                             </p>
                           </div>
                         </div>
                         
-                        <div className="bg-slate-900 dark:bg-slate-950 rounded-lg p-4 border">
-                          <div className="flex items-center gap-2 mb-2">
-                            <div className="flex gap-1">
-                              <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                              <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                              <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                        {command.examples && command.examples.length > 0 && (
+                          <div>
+                            <h5 className="font-semibold text-slate-800 dark:text-slate-100 mb-3 flex items-center gap-2">
+                              <Copy className="w-4 h-4 text-green-600" />
+                              Przykłady użycia:
+                            </h5>
+                            <div className="space-y-2">
+                              {command.examples.slice(0, 4).map((example: string, index: number) => (
+                                <div key={index} className="bg-slate-900 dark:bg-slate-950 rounded-lg p-3 border">
+                                  <div className="flex items-center justify-between">
+                                    <code className="text-green-400 font-mono text-sm flex-1">
+                                      {example.split(' - ')[0]}
+                                    </code>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => copyToClipboard(example.split(' - ')[0])}
+                                      className="ml-2 h-6 w-6 p-0 hover:bg-slate-700"
+                                    >
+                                      <Copy className="w-3 h-3" />
+                                    </Button>
+                                  </div>
+                                  {example.split(' - ')[1] && (
+                                    <p className="text-slate-400 text-xs mt-1">
+                                      {example.split(' - ')[1]}
+                                    </p>
+                                  )}
+                                </div>
+                              ))}
                             </div>
-                            <span className="text-slate-400 text-sm font-mono">Command Prompt</span>
                           </div>
-                          <code className="text-green-400 font-mono text-sm block">
-                            C:\&gt; {command.command}
-                          </code>
-                        </div>
+                        )}
                       </div>
                     )}
 

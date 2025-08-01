@@ -38,7 +38,8 @@ export class DatabaseStorage implements IStorage {
         syntax: polecenia_cmd.polecenie,
         category: sql<string>`'Polecenia CMD'`.as('category'),
         difficulty: sql<string>`'Średni'`.as('difficulty'),
-        examples: sql<string[]>`array[polecenia_cmd.opis_szczegolowy]`.as('examples')
+        examples: polecenia_cmd.przyklady_uzycia,
+        detailed_description: polecenia_cmd.opis_szczegolowy
       })
       .from(polecenia_cmd)
       .where(
@@ -64,7 +65,8 @@ export class DatabaseStorage implements IStorage {
         syntax: polecenia_cmd.polecenie,
         category: sql<string>`'Polecenia CMD'`.as('category'),
         difficulty: sql<string>`'Średni'`.as('difficulty'),
-        examples: sql<string[]>`array[polecenia_cmd.opis_szczegolowy]`.as('examples')
+        examples: polecenia_cmd.przyklady_uzycia,
+        detailed_description: polecenia_cmd.opis_szczegolowy
       })
       .from(polecenia_cmd)
       .orderBy(polecenia_cmd.id)

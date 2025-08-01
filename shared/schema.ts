@@ -25,6 +25,7 @@ export const polecenia_cmd = pgTable("polecenia_cmd", {
   polecenie: text("polecenie"),
   opis_szczegolowy: text("opis_szczegolowy"),
   slowa_kluczowe: text("slowa_kluczowe").array(),
+  przyklady_uzycia: text("przyklady_uzycia").array(),
 });
 
 export const insertUserSchema = createInsertSchema(users).pick({
