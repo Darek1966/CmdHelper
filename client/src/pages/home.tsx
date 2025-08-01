@@ -116,6 +116,8 @@ export default function Home() {
   const handleSuggestionClick = (suggestion: string) => {
     setSearchQuery(suggestion);
     setShowSuggestions(false);
+    setActiveSuggestionIndex(-1);
+    setSuggestions([]);
     searchMutation.mutate(suggestion);
   };
 
@@ -139,6 +141,9 @@ export default function Home() {
         if (activeSuggestionIndex >= 0) {
           e.preventDefault();
           handleSuggestionClick(suggestions[activeSuggestionIndex]);
+        } else if (showSuggestions) {
+          setShowSuggestions(false);
+          setActiveSuggestionIndex(-1);
         }
         break;
       case 'Escape':
@@ -238,7 +243,10 @@ export default function Home() {
                     onChange={handleInputChange}
                     onKeyDown={handleKeyDown}
                     onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
-                    onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+                    onBlur={() => setTimeout(() => {
+                      setShowSuggestions(false);
+                      setActiveSuggestionIndex(-1);
+                    }, 200)}
                     className="pl-11 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
                     autoComplete="off"
                   />
