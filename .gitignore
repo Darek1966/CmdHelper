@@ -5,4 +5,6 @@ server/public
 vite.config.ts.*
 *.tar.gz
 desktop.ini
-.local\
+.local
+.local/state/replit/agent/
+
